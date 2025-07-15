@@ -3,9 +3,7 @@ name: Build & Push
 on:
   workflow_dispatch:
   push:
-    branches: [ dev ]
-  pull_request:
-    branches: [ dev ]
+    branches: [ add-gha-test ]
 
 env:
   IMAGE_TAG: test-sample-img-tag
