@@ -57,6 +57,6 @@ jobs:
       - name: Test MySQL connection from client container
         run: |
           docker run --rm --network flash-net public.ecr.aws/docker/library/mysql:8.0 \
-            mysql -h mysql_ci -u root -e "SELECT 1;"
+            mysql -h mysql_ci -u root -e "SELECT user, host FROM mysql.user;"
 
       
