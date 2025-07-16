@@ -2,8 +2,8 @@ name: Build & Push
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ add-gha-test ]
+  # push:
+  #   branches: [ add-gha-test ]
 
 env:
   IMAGE_TAG: test-sample-img-tag
