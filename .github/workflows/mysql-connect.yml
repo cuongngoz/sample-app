@@ -51,7 +51,7 @@ jobs:
 
       - name: Test MySQL connection from client container
         run: |
-          docker run --rm \
+          docker run --rm --add-host=host.docker.internal:host-gateway \
           public.ecr.aws/docker/library/mysql:8.0 \
             mysql -h host.docker.internal -u root -e "USE flash_test; SELECT 1;"
 
