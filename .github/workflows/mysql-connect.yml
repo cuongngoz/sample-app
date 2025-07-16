@@ -39,12 +39,7 @@ jobs:
 
       - name: Setup database
         run: |
-          # mysql -h 127.0.0.1 -u root -e "SHOW VARIABLES LIKE 'bind_address';"
-          # mysql -h 127.0.0.1 -u root -e "SHOW GRANTS FOR 'root'@'%';"
-          # mysql -h 127.0.0.1 -u root -e 'SELECT user, host FROM mysql.user;'
           mysql -h 127.0.0.1 -u root -e 'CREATE DATABASE IF NOT EXISTS flash_test;'
-          # mysql -h 127.0.0.1 -u root -e "GRANT ALL PRIVILEGES ON flash_test.* TO 'root'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;"
-          # mysql -h 127.0.0.1 -u root -e "SHOW GRANTS FOR 'root'@'%';"
 
       - name: Check 3306
         run: |
@@ -58,6 +53,6 @@ jobs:
         run: |
           docker run --rm \
           public.ecr.aws/docker/library/mysql:8.0 \
-            mysql -h mysql_ci -u root -e "USE flash_test; SELECT 1;"
+            mysql -h host.docker.internal -u root -e "USE flash_test; SELECT 1;"
 
       
