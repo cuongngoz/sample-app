@@ -1,0 +1,62 @@
+name: CI Checks
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ add-gha-test ]
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: check docker version
+        run: docker context ls
+
+      - name: check docker version
+        run: docker version
+
+      - name: Create Docker network
+        run: |
+          docker network create flash-net
+
+      - name: Start MySQL Container
+        run: |
+          docker run --name mysql_ci --network flash-net \
+          -e MYSQL_ALLOW_EMPTY_PASSWORD=yes \
+          -e MYSQL_DATABASE=flash_test \
+          -p 3306:3306 \
+          -d public.ecr.aws/docker/library/mysql:8.0
+
+      - name: Install MySQL Client
+        run: |
+          sudo apt update
+          sudo apt install net-tools
+          sudo apt install -y mysql-client
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup database
+        run: |
+          mysql -h 127.0.0.1 -u root -e "SHOW VARIABLES LIKE 'bind_address';"
+          mysql -h 127.0.0.1 -u root -e "SHOW GRANTS FOR 'root'@'%';"
+          mysql -h 127.0.0.1 -u root -e 'SELECT user, host FROM mysql.user;'
+          mysql -h 127.0.0.1 -u root -e 'CREATE DATABASE IF NOT EXISTS flash_test;'
+          mysql -h 127.0.0.1 -u root -e "GRANT ALL PRIVILEGES ON flash_test.* TO 'root'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;"
+          mysql -h 127.0.0.1 -u root -e "SHOW GRANTS FOR 'root'@'%';"
+
+      - name: Check 3306
+        run: |
+          sudo netstat -tulnp | grep 3306
+
+      - name: check Docker logs
+        run: |
+          docker ps
+
+      - name: Test MySQL connection from client container
+        run: |
+          docker run --rm --network flash-net public.ecr.aws/docker/library/mysql:8.0 \
+            mysql -h mysql_ci -u root -e "SELECT 1;"
+
+      
