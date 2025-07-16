@@ -16,13 +16,14 @@ jobs:
       - name: check docker version
         run: docker version
 
-      - name: Create Docker network
-        run: |
-          docker network create flash-net
+      # - name: Create Docker network
+      #   run: |
+      #     docker network create flash-net
 
       - name: Start MySQL Container
         run: |
-          docker run --name mysql_ci --network flash-net \
+          docker run --name mysql_ci \
+          # --network flash-net \
           -e MYSQL_ALLOW_EMPTY_PASSWORD=yes \
           -e MYSQL_DATABASE=flash_test \
           -p 3306:3306 \
@@ -56,7 +57,9 @@ jobs:
 
       - name: Test MySQL connection from client container
         run: |
-          docker run --rm --network flash-net public.ecr.aws/docker/library/mysql:8.0 \
+          docker run --rm \
+          # --network flash-net \
+          public.ecr.aws/docker/library/mysql:8.0 \
             mysql -h mysql_ci -u root -e "USE flash_test; SELECT 1;"
 
       
